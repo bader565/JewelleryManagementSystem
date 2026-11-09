@@ -1,0 +1,940 @@
+﻿
+@model Jewellery.Web.ViewModels.Documents.DocumentsViewModel
+
+@{
+    ViewData["Title"] = "Document OCR";
+    var result = Model.Result;
+    var certificate = result?.CertificateData;
+    var invoice = result?.InvoiceData;
+    var appraisal = result?.AppraisalData;
+}
+
+<div class="documents-page" dir="rtl">
+
+    <div class="documents-heading">
+        <div>
+            <span class="section-eyebrow">DOCUMENT INTELLIGENCE</span>
+            <h2>استخراج بيانات المستندات</h2>
+            <p>استخدم تقنية التعرف الضوئي على الحروف لاستخراج بيانات الشهادات والفواتير وتقارير التقييم.</p>
+        </div>
+
+        <div class="documents-heading-icon">◇</div>
+    </div>
+
+    <div class="ocr-types">
+
+        <div class="ocr-type-card">
+            <div class="ocr-type-icon">◇</div>
+            <div>
+                <h5>الشهادات</h5>
+                <span>Certificate</span>
+            </div>
+        </div>
+
+        <div class="ocr-type-card">
+            <div class="ocr-type-icon">▤</div>
+            <div>
+                <h5>الفواتير</h5>
+                <span>Invoice</span>
+            </div>
+        </div>
+
+        <div class="ocr-type-card">
+            <div class="ocr-type-icon">▧</div>
+            <div>
+                <h5>تقارير التقييم</h5>
+                <span>Appraisal Report</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="upload-card">
+
+        <div class="card-heading">
+            <div>
+                <h4>رفع مستند جديد</h4>
+                <span>حدد المنتج ونوع المستند ثم اختر الملف المطلوب</span>
+            </div>
+
+            <div class="heading-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+        </div>
+
+        <div class="upload-body">
+
+            <form asp-controller="Documents"
+                  asp-action="ExtractText"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                @Html.AntiForgeryToken()
+
+                <div class="upload-form-grid">
+
+                    <div class="form-group">
+                        <label>المنتج المرتبط بالمستند</label>
+
+                        <select asp-for="ProductId"
+                                class="modern-input"
+                                required>
+                            <option value="">-- اختر المنتج --</option>
+
+                            @foreach (var product in Model.Products)
+                            {
+                                <option value="@product.Id">@product.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="DocumentType">نوع المستند</label>
+
+                        <select asp-for="DocumentType"
+                                class="modern-input"
+                                required>
+                            <option value="1">Certificate - شهادة</option>
+                            <option value="2">Invoice - فاتورة</option>
+                            <option value="3">Appraisal Report - تقرير تقييم</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group file-group">
+                        <label>ملف المستند</label>
+
+                        <div class="file-upload-area">
+                            <i class="fas fa-file-image"></i>
+
+                            <strong>اختر صورة المستند</strong>
+
+                            <span>JPG, JPEG, PNG, BMP, TIF, TIFF</span>
+
+                            <input type="file"
+                                   asp-for="File"
+                                   accept=".jpg,.jpeg,.png,.bmp,.tif,.tiff"
+                                   required />
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="upload-actions">
+                    <button type="submit" class="btn-extract">
+                        <i class="fas fa-magic"></i>
+                        استخراج البيانات
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="ocr-alert error">
+            <i class="fas fa-exclamation-circle"></i>
+            @ViewBag.Error
+        </div>
+    }
+
+    @if (ViewBag.Success != null)
+    {
+        <div class="ocr-alert success">
+            <i class="fas fa-check-circle"></i>
+            @ViewBag.Success
+        </div>
+    }
+
+    @if (result != null)
+    {
+        @if (result.Success)
+        {
+            <div class="result-success">
+                <div class="result-success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+
+                <div>
+                    <h4>تم استخراج البيانات بنجاح</h4>
+                    <p>اكتملت عملية قراءة المستند واستخراج المعلومات.</p>
+                </div>
+            </div>
+
+            @* Certificate *@
+            @if (certificate != null)
+            {
+                <div class="result-card">
+
+                    <div class="result-card-heading">
+                        <div class="result-heading-icon">◇</div>
+                        <div>
+                            <h4>معلومات الشهادة</h4>
+                            <span>Certificate Information</span>
+                        </div>
+                    </div>
+
+                    <div class="result-grid">
+
+                        <div class="result-item">
+                            <span>رقم الشهادة</span>
+                            <strong>@certificate.CertificateNumber</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>نوع المنتج</span>
+                            <strong>@certificate.ProductType</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>الوزن</span>
+                            <strong>@(certificate.Weight?.ToString() ?? "غير مكتشف")</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>النقاء</span>
+                            <strong>@certificate.Purity</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>نسبة الذهب</span>
+                            <strong>@(certificate.GoldPercentage?.ToString() ?? "غير مكتشف")%</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>نسبة الفضة</span>
+                            <strong>@(certificate.SilverPercentage?.ToString() ?? "غير مكتشف")%</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>نسبة النحاس</span>
+                            <strong>@(certificate.CopperPercentage?.ToString() ?? "غير مكتشف")%</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>معادن أخرى</span>
+                            <strong>@(certificate.OtherPercentage?.ToString() ?? "غير مكتشف")%</strong>
+                        </div>
+
+                    </div>
+                </div>
+            }
+
+            @* Invoice *@
+            @if (invoice != null)
+            {
+                <div class="result-card">
+
+                    <div class="result-card-heading">
+                        <div class="result-heading-icon">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <div>
+                            <h4>معلومات الفاتورة</h4>
+                            <span>Invoice Information</span>
+                        </div>
+                    </div>
+
+                    <div class="result-grid">
+
+                        <div class="result-item">
+                            <span>رقم الفاتورة</span>
+                            <strong>@invoice.InvoiceNumber</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>تاريخ الفاتورة</span>
+                            <strong>@(invoice.InvoiceDate?.ToString("yyyy-MM-dd") ?? "غير مكتشف")</strong>
+                        </div>
+
+                        <div class="result-item full-width">
+                            <span>البائع</span>
+                            <strong>@invoice.SellerName</strong>
+                        </div>
+
+                        <div class="result-item full-width">
+                            <span>العميل</span>
+                            <strong>@invoice.CustomerName</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="result-subheading">العناوين</div>
+
+                    <div class="result-grid">
+
+                        <div class="result-item">
+                            <span>عنوان البائع</span>
+                            <strong>@invoice.SellerAddress</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>عنوان الفوترة</span>
+                            <strong>@invoice.BillingAddress</strong>
+                        </div>
+
+                        <div class="result-item full-width">
+                            <span>عنوان التوصيل</span>
+                            <strong>@invoice.DeliveryAddress</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="result-subheading">الملخص المالي</div>
+
+                    <div class="result-grid financial-grid">
+
+                        <div class="result-item">
+                            <span>المجموع الفرعي</span>
+                            <strong>@(invoice.SubTotal?.ToString("N2") ?? "غير مكتشف")</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>الضريبة</span>
+                            <strong>@(invoice.TaxAmount?.ToString("N2") ?? "غير مكتشف")</strong>
+                        </div>
+
+                        <div class="result-item total-result">
+                            <span>الإجمالي</span>
+                            <strong>
+                                @(invoice.TotalAmount?.ToString("N2") ?? "غير مكتشف")
+                                @invoice.Currency
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="result-subheading">عناصر الفاتورة</div>
+
+                    @if (invoice.Items != null && invoice.Items.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="ocr-table">
+                                <thead>
+                                    <tr>
+                                        <th>الوصف</th>
+                                        <th>الكمية</th>
+                                        <th>سعر الوحدة</th>
+                                        <th>السعر الإجمالي</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var item in invoice.Items)
+                                    {
+                                        <tr>
+                                            <td>@item.Description</td>
+                                            <td>@(item.Quantity?.ToString() ?? "-")</td>
+                                            <td>@(item.UnitPrice?.ToString("N2") ?? "-")</td>
+                                            <td>@(item.TotalPrice?.ToString("N2") ?? "-")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-result">
+                            لم يتم اكتشاف عناصر في الفاتورة.
+                        </div>
+                    }
+
+                </div>
+            }
+
+            @* Appraisal Report *@
+            @if (appraisal != null)
+            {
+                <div class="result-card">
+
+                    <div class="result-card-heading">
+                        <div class="result-heading-icon">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <div>
+                            <h4>معلومات تقرير التقييم</h4>
+                            <span>Appraisal Report Information</span>
+                        </div>
+                    </div>
+
+                    <div class="result-grid">
+
+                        <div class="result-item">
+                            <span>رقم التقرير</span>
+                            <strong>@appraisal.ReportNumber</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>تاريخ التقييم</span>
+                            <strong>@(appraisal.AppraisalDate?.ToString("yyyy-MM-dd") ?? "غير مكتشف")</strong>
+                        </div>
+
+                        <div class="result-item full-width">
+                            <span>المقيّم</span>
+                            <strong>@appraisal.AppraiserName</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>نوع المنتج</span>
+                            <strong>@appraisal.ProductType</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>المادة</span>
+                            <strong>@appraisal.Material</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>الوزن</span>
+                            <strong>@(appraisal.Weight?.ToString() ?? "غير مكتشف")</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>النقاء</span>
+                            <strong>@appraisal.Purity</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="result-subheading">تفاصيل الألماس</div>
+
+                    <div class="result-grid">
+
+                        <div class="result-item">
+                            <span>الشكل</span>
+                            <strong>@appraisal.DiamondShape</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>درجة القطع</span>
+                            <strong>@appraisal.CutGrade</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>درجة اللون</span>
+                            <strong>@appraisal.ColorGrade</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>درجة النقاء</span>
+                            <strong>@appraisal.ClarityGrade</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>التناسق</span>
+                            <strong>@appraisal.Symmetry</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>التفلور</span>
+                            <strong>@appraisal.Fluorescence</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="result-subheading">التقييم المالي</div>
+
+                    <div class="result-grid">
+
+                        <div class="result-item total-result">
+                            <span>القيمة التقديرية</span>
+                            <strong>
+                                @(appraisal.EstimatedValue?.ToString("N2") ?? "غير مكتشف")
+                                @appraisal.Currency
+                            </strong>
+                        </div>
+
+                        <div class="result-item full-width">
+                            <span>الوصف</span>
+                            <strong>@appraisal.Description</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+            <div class="result-card">
+
+                <div class="result-card-heading">
+                    <div class="result-heading-icon">
+                        <i class="fas fa-align-left"></i>
+                    </div>
+                    <div>
+                        <h4>النص المستخرج الأصلي</h4>
+                        <span>Original Extracted Text</span>
+                    </div>
+                </div>
+
+                <div class="extracted-text-container">
+                    <textarea class="extracted-text"
+                              rows="12"
+                              readonly>@result.ExtractedText</textarea>
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="ocr-alert error result-error">
+                <i class="fas fa-exclamation-circle"></i>
+                @result.ErrorMessage
+            </div>
+        }
+    }
+
+</div>
+
+<style>
+    .documents-page {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px 45px;
+        color: #292929;
+    }
+
+    .documents-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+    }
+
+    .section-eyebrow {
+        color: #a88755;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    .documents-heading h2 {
+        font-size: 27px;
+        font-weight: 600;
+        margin: 9px 0;
+    }
+
+    .documents-heading p {
+        color: #999;
+        font-size: 14px;
+        margin: 0;
+        line-height: 1.8;
+    }
+
+    .documents-heading-icon {
+        width: 58px;
+        height: 58px;
+        background: #f5f0e7;
+        color: #a88755;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 35px;
+    }
+
+    .ocr-types {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 25px;
+    }
+
+    .ocr-type-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: #fff;
+        border: 1px solid #eeeae3;
+        border-radius: 12px;
+        padding: 17px;
+    }
+
+    .ocr-type-icon {
+        width: 43px;
+        height: 43px;
+        background: #f5f0e7;
+        color: #a88755;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+    }
+
+    .ocr-type-card h5 {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0 0 5px;
+    }
+
+    .ocr-type-card span {
+        color: #999;
+        font-size: 11px;
+    }
+
+    .upload-card,
+    .result-card {
+        background: #fff;
+        border: 1px solid #eeeae3;
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 24px;
+        box-shadow: 0 6px 25px rgba(0,0,0,.02);
+    }
+
+    .card-heading,
+    .result-card-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 21px 25px;
+        background: #fdfcf9;
+        border-bottom: 1px solid #eeeae3;
+    }
+
+    .card-heading h4,
+    .result-card-heading h4 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 6px;
+    }
+
+    .card-heading span,
+    .result-card-heading span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .heading-icon,
+    .result-heading-icon {
+        width: 43px;
+        height: 43px;
+        background: #f5f0e7;
+        color: #a88755;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+    }
+
+    .upload-body {
+        padding: 25px;
+    }
+
+    .upload-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 9px;
+    }
+
+    .modern-input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #e8e5df;
+        border-radius: 8px;
+        background: #fff;
+        font-size: 13px;
+        color: #333;
+        outline: none;
+    }
+
+    .modern-input:focus {
+        border-color: #b08d57;
+        box-shadow: 0 0 0 3px rgba(176,141,87,.10);
+    }
+
+    .file-group {
+        grid-column: 1 / -1;
+    }
+
+    .file-upload-area {
+        position: relative;
+        min-height: 150px;
+        border: 1px dashed #d9cbb3;
+        background: #fdfcf9;
+        border-radius: 11px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 9px;
+        color: #a88755;
+        overflow: hidden;
+    }
+
+    .file-upload-area > i {
+        font-size: 27px;
+    }
+
+    .file-upload-area strong {
+        font-size: 13px;
+    }
+
+    .file-upload-area span {
+        color: #aaa;
+        font-size: 11px;
+    }
+
+    .file-upload-area input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .upload-actions {
+        display: flex;
+        justify-content: flex-start;
+        border-top: 1px solid #eeeae3;
+        padding-top: 20px;
+    }
+
+    .btn-extract {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: none;
+        border-radius: 8px;
+        padding: 13px 25px;
+        background: #a88755;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .btn-extract:hover {
+        background: #8e7044;
+    }
+
+    .ocr-alert {
+        padding: 15px 18px;
+        border-radius: 9px;
+        margin-bottom: 20px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .ocr-alert.error {
+        background: #fff1ef;
+        border: 1px solid #f3d5d1;
+        color: #b84e46;
+    }
+
+    .ocr-alert.success {
+        background: #eff7ef;
+        border: 1px solid #dcebd9;
+        color: #54805a;
+    }
+
+    .result-success {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: #f2f8f1;
+        border: 1px solid #dcebd9;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+    }
+
+    .result-success-icon {
+        width: 43px;
+        height: 43px;
+        background: #e1efdf;
+        color: #54805a;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .result-success h4 {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0 0 5px;
+        color: #426e49;
+    }
+
+    .result-success p {
+        color: #78917a;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .result-card-heading {
+        justify-content: flex-start;
+        gap: 13px;
+    }
+
+    .result-card-heading > div:last-child {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .result-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 13px;
+        padding: 22px 25px;
+    }
+
+    .result-item {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        padding: 14px;
+        background: #faf9f7;
+        border-radius: 8px;
+        min-width: 0;
+    }
+
+    .result-item span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .result-item strong {
+        color: #333;
+        font-size: 13px;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .result-subheading {
+        margin: 8px 25px 0;
+        padding-top: 18px;
+        border-top: 1px solid #eeeae3;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .financial-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .total-result {
+        background: #f8f2e7;
+    }
+
+    .total-result strong {
+        color: #a88755;
+        font-size: 16px;
+    }
+
+    .table-responsive {
+        padding: 15px 25px 25px;
+    }
+
+    .ocr-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .ocr-table th {
+        padding: 13px;
+        background: #faf9f7;
+        color: #777;
+        text-align: right;
+        font-size: 12px;
+        font-weight: 600;
+        border-bottom: 1px solid #eeeae3;
+    }
+
+    .ocr-table td {
+        padding: 14px 13px;
+        border-bottom: 1px solid #f0eeea;
+        color: #555;
+        font-size: 13px;
+    }
+
+    .empty-result {
+        margin: 15px 25px 25px;
+        padding: 15px;
+        background: #faf9f7;
+        color: #999;
+        font-size: 13px;
+        border-radius: 8px;
+    }
+
+    .extracted-text-container {
+        padding: 22px 25px;
+    }
+
+    .extracted-text {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #eeeae3;
+        background: #faf9f7;
+        border-radius: 8px;
+        color: #555;
+        font-size: 12px;
+        line-height: 1.8;
+        resize: vertical;
+        direction: auto;
+        text-align: start;
+    }
+
+    @@media (max-width: 768px) {
+        .ocr-types {
+            grid-template-columns: 1fr;
+        }
+
+        .documents-heading {
+            align-items: flex-start;
+        }
+
+        .documents-heading-icon {
+            display: none;
+        }
+
+        .upload-form-grid,
+        .result-grid,
+        .financial-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .full-width {
+            grid-column: auto;
+        }
+
+        .upload-body {
+            padding: 18px;
+        }
+
+        .result-grid {
+            padding: 18px;
+        }
+
+        .card-heading,
+        .result-card-heading {
+            padding: 18px;
+        }
+    }
+</style>

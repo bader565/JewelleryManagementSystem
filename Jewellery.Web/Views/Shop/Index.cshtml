@@ -1,0 +1,464 @@
+﻿
+@model List<Jewellery.Application.DTOs.Products.ProductDto>
+
+@{
+    ViewData["Title"] = "Jewellery Shop";
+}
+
+<div class="shop-page" dir="rtl">
+
+    <section class="shop-hero">
+        <span class="shop-eyebrow">THE ART OF ELEGANCE</span>
+
+        <h1>اكتشف مجموعتنا المميزة</h1>
+
+        <p>
+            مجوهرات مختارة بعناية، تجمع بين الأناقة والفخامة
+            لترافق أجمل لحظاتك.
+        </p>
+
+        <a asp-controller="Cart"
+           asp-action="Index"
+           class="cart-link">
+            <i class="fas fa-shopping-bag"></i>
+            سلة المشتريات
+        </a>
+    </section>
+
+    <section class="shop-content">
+
+        <div class="section-heading">
+            <div>
+                <span>OUR COLLECTION</span>
+                <h2>تسوق مجموعتنا</h2>
+            </div>
+
+            <div class="collection-decoration">
+                <i class="fas fa-gem"></i>
+            </div>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="empty-shop">
+                <i class="fas fa-gem"></i>
+                <h4>لا توجد منتجات متاحة حالياً</h4>
+                <p>نعمل على إضافة قطع جديدة إلى مجموعتنا قريباً.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+
+                @foreach (var product in Model)
+                {
+                    <div class="col-xl-3 col-lg-4 col-md-6">
+
+                        <div class="shop-product-card">
+
+                            <div class="shop-image-container">
+
+                                @if (product.ImageUrls != null &&
+                                     product.ImageUrls.Any())
+                                {
+                                    <img src="@product.ImageUrls.First()"
+                                         class="shop-product-image"
+                                         alt="@product.Name" />
+                                }
+                                else
+                                {
+                                    <div class="shop-no-image">
+                                        <i class="far fa-gem"></i>
+                                    </div>
+                                }
+
+                                <div class="image-overlay">
+                                    <span>JEWELLERY COLLECTION</span>
+                                </div>
+
+                            </div>
+
+                            <div class="shop-product-body">
+
+                                <h3>@product.Name</h3>
+
+                                <div class="shop-product-info">
+                                    <span>
+                                        <i class="fas fa-gem"></i>
+                                        العيار: @product.Karat
+                                    </span>
+
+                                    <span>
+                                        <i class="fas fa-weight-hanging"></i>
+                                        @product.Weight.ToString("N3") غرام
+                                    </span>
+                                </div>
+
+                                <div class="shop-price">
+                                    @product.SellingPrice.ToString("N2")
+                                </div>
+
+                                <div class="stock-info">
+                                    @if (product.Quantity > 0)
+                                    {
+                                        <span class="stock-available">
+                                            <i class="fas fa-check-circle"></i>
+                                            متوفر: @product.Quantity
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="stock-unavailable">
+                                            غير متوفر
+                                        </span>
+                                    }
+                                </div>
+
+                                @if (product.Quantity > 0)
+                                {
+                                    <form asp-controller="Cart"
+                                          asp-action="Add"
+                                          method="post">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="productId"
+                                               value="@product.Id" />
+
+                                        <input type="hidden"
+                                               name="quantity"
+                                               value="1" />
+
+                                        <button type="submit"
+                                                class="add-cart-button">
+                                            <i class="fas fa-shopping-bag"></i>
+                                            أضف إلى السلة
+                                        </button>
+
+                                    </form>
+                                }
+                                else
+                                {
+                                    <button type="button"
+                                            class="add-cart-button disabled"
+                                            disabled>
+                                        غير متوفر حالياً
+                                    </button>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    </section>
+
+    <section class="shop-bottom-banner">
+        <i class="fas fa-gem"></i>
+        <h3>الأناقة تكمن في التفاصيل</h3>
+        <p>اختر قطعتك المميزة واجعل لحظاتك أكثر تألقاً.</p>
+    </section>
+
+</div>
+
+<style>
+
+    .shop-page {
+        background: #fff;
+        color: #292929;
+        padding-bottom: 45px;
+    }
+
+    /* Hero */
+
+    .shop-hero {
+        text-align: center;
+        padding: 75px 20px 65px;
+        background: #faf8f4;
+        border-bottom: 1px solid #eeeae3;
+    }
+
+    .shop-eyebrow {
+        color: #a88755;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 3px;
+    }
+
+    .shop-hero h1 {
+        font-size: 34px;
+        font-weight: 600;
+        margin: 17px 0 12px;
+        color: #292929;
+    }
+
+    .shop-hero p {
+        color: #888;
+        font-size: 14px;
+        line-height: 1.9;
+        margin-bottom: 25px;
+    }
+
+    .cart-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 12px 23px;
+        border: 1px solid #a88755;
+        color: #a88755;
+        text-decoration: none;
+        font-size: 13px;
+        border-radius: 5px;
+        transition: .25s;
+    }
+
+    .cart-link:hover {
+        background: #a88755;
+        color: #fff;
+    }
+
+    /* Collection */
+
+    .shop-content {
+        max-width: 1350px;
+        margin: 0 auto;
+        padding: 55px 25px;
+    }
+
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .section-heading span {
+        color: #a88755;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    .section-heading h2 {
+        font-size: 23px;
+        font-weight: 600;
+        margin: 7px 0 0;
+    }
+
+    .collection-decoration {
+        color: #c5ae88;
+        font-size: 25px;
+    }
+
+    /* Product Card */
+
+    .shop-product-card {
+        height: 100%;
+        background: #fff;
+        border: 1px solid #eeeae3;
+        border-radius: 9px;
+        overflow: hidden;
+        transition: transform .3s ease, box-shadow .3s ease;
+    }
+
+    .shop-product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0,0,0,.07);
+    }
+
+    .shop-image-container {
+        height: 280px;
+        position: relative;
+        overflow: hidden;
+        background: #faf8f4;
+    }
+
+    .shop-product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform .5s ease;
+    }
+
+    .shop-product-card:hover .shop-product-image {
+        transform: scale(1.06);
+    }
+
+    .shop-no-image {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #c4ad86;
+        font-size: 55px;
+    }
+
+    .image-overlay {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        padding: 10px;
+        background: linear-gradient(transparent, rgba(0,0,0,.35));
+        color: #fff;
+        font-size: 9px;
+        letter-spacing: 2px;
+        opacity: 0;
+        transition: opacity .3s;
+    }
+
+    .shop-product-card:hover .image-overlay {
+        opacity: 1;
+    }
+
+    .shop-product-body {
+        padding: 21px 17px;
+        text-align: center;
+    }
+
+    .shop-product-body h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #333;
+    }
+
+    .shop-product-info {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        color: #888;
+        font-size: 11px;
+    }
+
+    .shop-product-info i {
+        color: #b08d57;
+        margin-left: 4px;
+    }
+
+    .shop-price {
+        color: #a88755;
+        font-size: 22px;
+        font-weight: 700;
+        margin-top: 19px;
+    }
+
+    .stock-info {
+        margin: 10px 0 16px;
+        font-size: 11px;
+    }
+
+    .stock-available {
+        color: #63866a;
+    }
+
+    .stock-unavailable {
+        color: #b65d55;
+    }
+
+    .add-cart-button {
+        width: 100%;
+        padding: 11px;
+        border: 1px solid #292929;
+        background: #292929;
+        color: #fff;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 600;
+        transition: .25s;
+    }
+
+    .add-cart-button:hover {
+        background: #a88755;
+        border-color: #a88755;
+    }
+
+    .add-cart-button i {
+        margin-left: 7px;
+    }
+
+    .add-cart-button.disabled {
+        background: #eee;
+        border-color: #eee;
+        color: #999;
+        cursor: not-allowed;
+    }
+
+    /* Empty State */
+
+    .empty-shop {
+        text-align: center;
+        padding: 65px 20px;
+        background: #faf8f4;
+        border-radius: 10px;
+    }
+
+    .empty-shop > i {
+        font-size: 45px;
+        color: #b08d57;
+        margin-bottom: 18px;
+    }
+
+    .empty-shop h4 {
+        font-size: 17px;
+        font-weight: 600;
+    }
+
+    .empty-shop p {
+        color: #999;
+        font-size: 13px;
+    }
+
+    /* Bottom Banner */
+
+    .shop-bottom-banner {
+        text-align: center;
+        padding: 45px 20px;
+        background: #faf8f4;
+        border-top: 1px solid #eeeae3;
+        border-bottom: 1px solid #eeeae3;
+    }
+
+    .shop-bottom-banner i {
+        color: #a88755;
+        font-size: 25px;
+        margin-bottom: 13px;
+    }
+
+    .shop-bottom-banner h3 {
+        font-size: 19px;
+        font-weight: 600;
+    }
+
+    .shop-bottom-banner p {
+        color: #888;
+        font-size: 13px;
+        margin: 0;
+    }
+
+    @@media (max-width: 768px) {
+        .shop-hero {
+            padding: 50px 15px;
+        }
+
+        .shop-hero h1 {
+            font-size: 26px;
+        }
+
+        .shop-content {
+            padding: 35px 15px;
+        }
+
+        .shop-image-container {
+            height: 250px;
+        }
+    }
+
+</style>

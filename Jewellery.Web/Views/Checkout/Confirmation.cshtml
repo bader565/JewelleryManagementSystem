@@ -1,0 +1,499 @@
+﻿
+@model Jewellery.Application.DTOs.Orders.OrderDto
+
+@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+<div class="confirmation-page" dir="rtl">
+
+    <div class="success-section">
+
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+
+        <span class="success-eyebrow">ORDER COMPLETED</span>
+
+        <h2>تم استلام طلبك بنجاح!</h2>
+
+        <p>شكراً لثقتك بنا. تم تسجيل طلبك وسنبدأ بتجهيزه.</p>
+
+        <div class="order-number-box">
+            <span>رقم الطلب</span>
+            <strong>@Model.OrderNumber</strong>
+        </div>
+
+    </div>
+
+    <div class="order-details-card">
+
+        <div class="order-card-header">
+            <div>
+                <h4>تفاصيل الطلب</h4>
+                <span>معلومات الشراء والتوصيل</span>
+            </div>
+
+            <div class="order-header-icon">◇</div>
+        </div>
+
+        <div class="order-info-grid">
+
+            <div class="info-section">
+                <h5><i class="fas fa-user"></i> معلومات العميل</h5>
+
+                <div class="info-row">
+                    <span>الاسم</span>
+                    <strong>@Model.CustomerName</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>رقم الهاتف</span>
+                    <strong>@Model.CustomerPhone</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>البريد الإلكتروني</span>
+                    <strong>@Model.CustomerEmail</strong>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h5><i class="fas fa-truck"></i> معلومات التوصيل</h5>
+
+                <div class="info-row">
+                    <span>المدينة</span>
+                    <strong>@Model.City</strong>
+                </div>
+
+                <div class="info-row address-row">
+                    <span>عنوان التوصيل</span>
+                    <strong>@Model.ShippingAddress</strong>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="purchased-heading">
+            <h5>المنتجات المطلوبة</h5>
+            <span>@(Model.Items?.Count ?? 0) منتجات</span>
+        </div>
+
+        @if (Model.Items != null && Model.Items.Any())
+        {
+            <div class="ordered-products">
+
+                @foreach (var item in Model.Items)
+                {
+                    <div class="ordered-product">
+
+                        <div class="ordered-image">
+                            @if (!string.IsNullOrEmpty(item.ProductImageUrl))
+                            {
+                                <img src="@item.ProductImageUrl"
+                                     alt="@item.ProductName" />
+                            }
+                            else
+                            {
+                                <span>◇</span>
+                            }
+                        </div>
+
+                        <div class="ordered-product-info">
+                            <h6>@item.ProductName</h6>
+                            <span>الكمية: @item.Quantity</span>
+                            <span>سعر القطعة: @item.UnitPrice.ToString("N2")</span>
+                        </div>
+
+                        <div class="ordered-product-total">
+                            <span>الإجمالي</span>
+                            <strong>@item.TotalPrice.ToString("N2")</strong>
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+        <div class="order-total-section">
+            <span>الإجمالي النهائي</span>
+            <strong>@Model.TotalAmount.ToString("N2")</strong>
+        </div>
+
+        <div class="order-meta">
+
+            <div>
+                <span>حالة الطلب</span>
+                <strong class="order-status">@Model.Status</strong>
+            </div>
+
+            <div>
+                <span>تاريخ الطلب</span>
+                <strong>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="confirmation-actions">
+
+        <a asp-controller="Shop"
+           asp-action="Index"
+           class="btn-continue-shopping">
+            متابعة التسوق
+            <span>←</span>
+        </a>
+
+    </div>
+
+</div>
+
+<style>
+    .confirmation-page {
+        max-width: 1050px;
+        margin: 45px auto;
+        padding: 0 20px 40px;
+        color: #292929;
+    }
+
+    .success-section {
+        text-align: center;
+        padding: 25px 15px 40px;
+    }
+
+    .success-icon {
+        width: 76px;
+        height: 76px;
+        background: #f3f8f1;
+        border: 1px solid #dcebd9;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        color: #71966b;
+        font-size: 30px;
+    }
+
+    .success-eyebrow {
+        color: #a88755;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    .success-section h2 {
+        font-size: 28px;
+        font-weight: 600;
+        margin: 12px 0;
+    }
+
+    .success-section > p {
+        color: #999;
+        font-size: 14px;
+    }
+
+    .order-number-box {
+        display: inline-flex;
+        flex-direction: column;
+        gap: 6px;
+        background: #faf8f4;
+        border: 1px solid #eee5d7;
+        padding: 13px 35px;
+        border-radius: 10px;
+        margin-top: 15px;
+    }
+
+    .order-number-box span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .order-number-box strong {
+        color: #a88755;
+        font-size: 19px;
+        letter-spacing: 1px;
+    }
+
+    .order-details-card {
+        background: #fff;
+        border: 1px solid #eeeae3;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0,0,0,.025);
+    }
+
+    .order-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 28px;
+        background: #fdfcf9;
+        border-bottom: 1px solid #eeeae3;
+    }
+
+    .order-card-header h4 {
+        font-size: 17px;
+        font-weight: 600;
+        margin: 0 0 6px;
+    }
+
+    .order-card-header span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .order-header-icon {
+        width: 43px;
+        height: 43px;
+        background: #f5f0e7;
+        color: #a88755;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+    }
+
+    .order-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        padding: 28px;
+    }
+
+    .info-section h5 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .info-section h5 i {
+        color: #a88755;
+        margin-left: 7px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f3f1ed;
+    }
+
+    .info-row span {
+        color: #999;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .info-row strong {
+        font-size: 13px;
+        font-weight: 600;
+        text-align: left;
+        overflow-wrap: anywhere;
+    }
+
+    .section-divider {
+        height: 1px;
+        background: #eeeae3;
+        margin: 0 28px;
+    }
+
+    .purchased-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 25px 28px 15px;
+    }
+
+    .purchased-heading h5 {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .purchased-heading span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .ordered-products {
+        padding: 0 28px;
+    }
+
+    .ordered-product {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 18px 0;
+        border-bottom: 1px solid #f0eeea;
+    }
+
+    .ordered-image {
+        width: 75px;
+        height: 75px;
+        flex-shrink: 0;
+        background: #f8f6f2;
+        border-radius: 9px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #a88755;
+        font-size: 25px;
+    }
+
+    .ordered-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .ordered-product-info {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        flex: 1;
+    }
+
+    .ordered-product-info h6 {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .ordered-product-info span,
+    .ordered-product-total span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .ordered-product-total {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        text-align: left;
+    }
+
+    .ordered-product-total strong {
+        font-size: 14px;
+    }
+
+    .order-total-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px 28px;
+        padding: 20px;
+        background: #faf8f4;
+        border-radius: 9px;
+    }
+
+    .order-total-section span {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .order-total-section strong {
+        color: #a88755;
+        font-size: 22px;
+    }
+
+    .order-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 20px 28px;
+        border-top: 1px solid #eeeae3;
+        background: #fdfcf9;
+    }
+
+    .order-meta > div {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .order-meta span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .order-meta strong {
+        font-size: 13px;
+    }
+
+    .order-status {
+        color: #a88755;
+        background: #f5f0e7;
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+
+    .confirmation-actions {
+        text-align: center;
+        margin-top: 28px;
+    }
+
+    .btn-continue-shopping {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        padding: 13px 35px;
+        background: #a88755;
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        transition: .2s;
+    }
+
+    .btn-continue-shopping:hover {
+        background: #8e7044;
+        color: #fff;
+    }
+
+    @@media (max-width: 650px) {
+        .success-section h2 {
+            font-size: 23px;
+        }
+
+        .order-info-grid {
+            grid-template-columns: 1fr;
+            padding: 20px;
+        }
+
+        .order-card-header {
+            padding: 18px 20px;
+        }
+
+        .ordered-products {
+            padding: 0 18px;
+        }
+
+        .ordered-product {
+            gap: 10px;
+        }
+
+        .ordered-image {
+            width: 60px;
+            height: 60px;
+        }
+
+        .order-meta {
+            flex-direction: column;
+            padding: 18px;
+        }
+
+        .order-total-section {
+            margin: 15px 18px;
+        }
+    }
+</style>

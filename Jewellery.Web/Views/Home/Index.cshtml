@@ -1,0 +1,281 @@
+﻿
+@{
+    ViewData["Title"] = "Home";
+}
+
+<style>
+    .home-page {
+        color: #292929;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .hero-section {
+        min-height: 490px;
+        background: #f5f2ed;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        padding: 65px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-content {
+        max-width: 570px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-label {
+        color: #a88755;
+        font-size: 13px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .hero-title {
+        font-size: clamp(38px, 5vw, 58px);
+        font-weight: 600;
+        line-height: 1.2;
+        margin: 22px 0;
+        color: #292929;
+    }
+
+    .hero-description {
+        color: #777;
+        font-size: 16px;
+        line-height: 1.9;
+        max-width: 460px;
+    }
+
+    .btn-shop {
+        display: inline-block;
+        background: #292929;
+        color: white;
+        padding: 14px 32px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-top: 25px;
+        transition: .3s;
+    }
+
+    .btn-shop:hover {
+        background: #a88755;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .hero-decoration {
+        position: absolute;
+        width: 390px;
+        height: 390px;
+        border: 1px solid #dfd4c3;
+        border-radius: 50%;
+        right: 10%;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .hero-decoration::before {
+        content: "";
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        border: 1px solid #dfd4c3;
+        border-radius: 50%;
+        top: 55px;
+        left: 55px;
+    }
+
+    .hero-decoration::after {
+        content: "✧";
+        position: absolute;
+        font-size: 180px;
+        color: #b89b70;
+        top: 85px;
+        left: 105px;
+    }
+
+    .section-heading {
+        text-align: center;
+        margin: 65px 0 35px;
+    }
+
+    .section-heading h2 {
+        font-size: 30px;
+        font-weight: 600;
+    }
+
+    .section-heading p {
+        color: #888;
+        margin-top: 10px;
+    }
+
+    .category-card {
+        display: block;
+        text-decoration: none;
+        color: #292929;
+        background: #faf9f7;
+        border: 1px solid #eeeae4;
+        border-radius: 12px;
+        padding: 35px 20px;
+        text-align: center;
+        height: 100%;
+        transition: .3s;
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px);
+        border-color: #c5aa80;
+        color: #a88755;
+    }
+
+    .category-icon {
+        font-size: 34px;
+        color: #b08d57;
+        margin-bottom: 18px;
+    }
+
+    .category-card h5 {
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .category-card p {
+        font-size: 14px;
+        color: #888;
+        margin: 0;
+    }
+
+    .home-info {
+        background: #292929;
+        color: white;
+        border-radius: 14px;
+        padding: 38px;
+        margin-top: 65px;
+        text-align: center;
+    }
+
+    .home-info p {
+        color: #ccc;
+        margin: 10px 0 0;
+    }
+
+    @@media (max-width: 768px) {
+        .hero-section {
+            padding: 40px 25px;
+            min-height: 420px;
+        }
+
+        .hero-decoration {
+            opacity: .18;
+            right: -180px;
+        }
+
+        .hero-content {
+            max-width: 100%;
+        }
+    }
+</style>
+
+<div class="home-page">
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+
+        <div class="hero-content">
+            <span class="hero-label">Timeless Elegance</span>
+
+            <h1 class="hero-title">
+                Jewellery That<br />
+                Tells Your Story.
+            </h1>
+
+            <p class="hero-description">
+                Discover a collection of beautiful jewellery pieces,
+                where elegance meets craftsmanship and every detail
+                tells a unique story.
+            </p>
+
+            <a asp-controller="Shop"
+               asp-action="Index"
+               class="btn-shop">
+                Explore Collection
+                <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+
+        <div class="hero-decoration"></div>
+
+    </section>
+
+    <!-- Categories -->
+    <section>
+
+        <div class="section-heading">
+            <h2>Explore Our World</h2>
+            <p>Everything you need to discover and manage your jewellery.</p>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <a asp-controller="Shop"
+                   asp-action="Index"
+                   class="category-card">
+
+                    <div class="category-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+
+                    <h5>Our Collection</h5>
+                    <p>Explore our jewellery collection.</p>
+
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <a asp-controller="Certificates"
+                   asp-action="Index"
+                   class="category-card">
+
+                    <div class="category-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+
+                    <h5>Certificates</h5>
+                    <p>View jewellery certificates and details.</p>
+
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <a asp-controller="Invoices"
+                   asp-action="Index"
+                   class="category-card">
+
+                    <div class="category-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+
+                    <h5>Invoices</h5>
+                    <p>Manage and review your invoices.</p>
+
+                </a>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Information Section -->
+    <section class="home-info">
+        <h3>Beauty in Every Detail</h3>
+        <p>
+            A modern jewellery experience built around quality,
+            elegance and trust.
+        </p>
+    </section>
+
+</div>

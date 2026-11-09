@@ -1,0 +1,479 @@
+﻿
+@model Jewellery.Application.DTOs.Cart.CartDto
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="cart-page" dir="rtl">
+
+    <div class="cart-heading">
+        <div>
+            <span class="cart-eyebrow">YOUR SELECTION</span>
+            <h2>سلة التسوق</h2>
+            <p>راجع القطع المختارة قبل إتمام عملية الشراء</p>
+        </div>
+
+        <a asp-controller="Shop" asp-action="Index" class="continue-link">
+            ← متابعة التسوق
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="cart-alert success">@TempData["Success"]</div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="cart-alert error">@TempData["Error"]</div>
+    }
+
+    @if (Model.Items == null || !Model.Items.Any())
+    {
+        <div class="empty-cart">
+            <div class="empty-cart-icon">◇</div>
+            <h3>سلة التسوق فارغة</h3>
+            <p>لم تقم بإضافة أي قطع مجوهرات إلى سلتك بعد.</p>
+
+            <a asp-controller="Shop"
+               asp-action="Index"
+               class="btn-gold">
+                اكتشف مجموعتنا
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-layout">
+
+            <div class="cart-items-card">
+
+                <div class="cart-card-heading">
+                    <h4>القطع المختارة</h4>
+                    <span>@Model.Items.Count قطعة</span>
+                </div>
+
+                @foreach (var item in Model.Items)
+                {
+                    <div class="cart-item">
+
+                        <div class="cart-product-image">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" alt="@item.ProductName" />
+                            }
+                            else
+                            {
+                                <span>◇</span>
+                            }
+                        </div>
+
+                        <div class="cart-product-info">
+                            <h5>@item.ProductName</h5>
+                            <span>السعر: @item.UnitPrice.ToString("N2")</span>
+
+                            <div class="cart-quantity-mobile">
+                                <form asp-action="UpdateQuantity" method="post">
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="productId"
+                                           value="@item.ProductId" />
+
+                                    <input type="number"
+                                           name="quantity"
+                                           value="@item.Quantity"
+                                           min="1"
+                                           class="quantity-input" />
+
+                                    <button type="submit" class="update-link">
+                                        تحديث
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="cart-item-total">
+                            <span>الإجمالي</span>
+                            <strong>@item.TotalPrice.ToString("N2")</strong>
+                        </div>
+
+                        <form asp-action="Remove" method="post">
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="productId"
+                                   value="@item.ProductId" />
+
+                            <button type="submit" class="remove-item"
+                                    title="حذف المنتج">
+                                ×
+                            </button>
+                        </form>
+
+                    </div>
+                }
+
+            </div>
+
+            <div class="cart-summary">
+
+                <h4>ملخص الطلب</h4>
+
+                <div class="summary-row">
+                    <span>عدد القطع</span>
+                    <strong>@Model.Items.Sum(x => x.Quantity)</strong>
+                </div>
+
+                <div class="summary-row total-row">
+                    <span>الإجمالي</span>
+                    <strong>@Model.TotalPrice.ToString("N2")</strong>
+                </div>
+
+                <p class="summary-note">
+                    سيتم احتساب أي رسوم إضافية إن وجدت أثناء إتمام الطلب.
+                </p>
+
+                <a asp-controller="Checkout"
+                   asp-action="Index"
+                   class="btn-checkout">
+                    متابعة إلى إتمام الطلب
+                    <span>←</span>
+                </a>
+
+                <a asp-controller="Shop"
+                   asp-action="Index"
+                   class="back-to-shop">
+                    متابعة التسوق
+                </a>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+<style>
+    .cart-page {
+        max-width: 1200px;
+        margin: 45px auto;
+        padding: 0 20px;
+        color: #292929;
+    }
+
+    .cart-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 35px;
+    }
+
+    .cart-eyebrow {
+        color: #a88755;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    .cart-heading h2 {
+        font-size: 30px;
+        font-weight: 600;
+        margin: 8px 0;
+    }
+
+    .cart-heading p {
+        color: #999;
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .continue-link {
+        color: #a88755;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .cart-alert {
+        padding: 14px 18px;
+        border-radius: 9px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .cart-alert.success {
+        background: #edf7ef;
+        color: #397448;
+    }
+
+    .cart-alert.error {
+        background: #fff0ee;
+        color: #b84e46;
+    }
+
+    .cart-layout {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 25px;
+        align-items: start;
+    }
+
+    .cart-items-card,
+    .cart-summary {
+        background: #fff;
+        border: 1px solid #eeeae3;
+        border-radius: 14px;
+        padding: 25px;
+    }
+
+    .cart-card-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eeeae3;
+    }
+
+    .cart-card-heading h4,
+    .cart-summary h4 {
+        font-size: 17px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .cart-card-heading span {
+        color: #999;
+        font-size: 13px;
+    }
+
+    .cart-item {
+        display: grid;
+        grid-template-columns: 90px 1fr auto auto;
+        gap: 18px;
+        align-items: center;
+        padding: 22px 0;
+        border-bottom: 1px solid #f0eeea;
+    }
+
+    .cart-product-image {
+        width: 90px;
+        height: 90px;
+        background: #f8f6f2;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #b08d57;
+        font-size: 30px;
+        overflow: hidden;
+    }
+
+    .cart-product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .cart-product-info h5 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .cart-product-info > span {
+        color: #999;
+        font-size: 13px;
+    }
+
+    .cart-quantity-mobile {
+        margin-top: 12px;
+    }
+
+    .cart-quantity-mobile form {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .quantity-input {
+        width: 65px;
+        padding: 6px;
+        border: 1px solid #e8e5df;
+        border-radius: 6px;
+        text-align: center;
+    }
+
+    .update-link {
+        background: none;
+        border: none;
+        color: #a88755;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .cart-item-total {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .cart-item-total span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .cart-item-total strong {
+        font-size: 15px;
+    }
+
+    .remove-item {
+        border: none;
+        background: #fff3f1;
+        color: #bd625a;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .remove-item:hover {
+        background: #fbe1de;
+    }
+
+    .cart-summary h4 {
+        margin-bottom: 25px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 18px;
+        color: #777;
+        font-size: 14px;
+    }
+
+    .summary-row strong {
+        color: #333;
+    }
+
+    .total-row {
+        border-top: 1px solid #eeeae3;
+        padding-top: 20px;
+        margin-top: 20px;
+        color: #333;
+    }
+
+    .total-row strong {
+        color: #a88755;
+        font-size: 20px;
+    }
+
+    .summary-note {
+        color: #999;
+        font-size: 12px;
+        line-height: 1.8;
+        margin: 20px 0;
+    }
+
+    .btn-checkout,
+    .btn-gold {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 14px;
+        border-radius: 8px;
+        background: #a88755;
+        color: #fff;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        transition: .2s;
+    }
+
+    .btn-checkout:hover,
+    .btn-gold:hover {
+        background: #8e7044;
+        color: #fff;
+    }
+
+    .back-to-shop {
+        display: block;
+        text-align: center;
+        margin-top: 18px;
+        color: #777;
+        font-size: 13px;
+        text-decoration: none;
+    }
+
+    .empty-cart {
+        text-align: center;
+        padding: 75px 20px;
+        background: #fff;
+        border: 1px solid #eeeae3;
+        border-radius: 14px;
+    }
+
+    .empty-cart-icon {
+        font-size: 55px;
+        color: #b08d57;
+        margin-bottom: 15px;
+    }
+
+    .empty-cart h3 {
+        font-size: 21px;
+        font-weight: 600;
+    }
+
+    .empty-cart p {
+        color: #999;
+        margin: 12px 0 25px;
+    }
+
+    .empty-cart .btn-gold {
+        width: auto;
+        display: inline-flex;
+        padding: 12px 28px;
+    }
+
+    @@media (max-width: 850px) {
+        .cart-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .cart-heading {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .cart-items-card,
+        .cart-summary {
+            padding: 16px;
+        }
+
+        .cart-item {
+            grid-template-columns: 70px 1fr auto;
+            gap: 12px;
+        }
+
+        .cart-product-image {
+            width: 70px;
+            height: 70px;
+        }
+
+        .cart-item-total {
+            grid-column: 2;
+        }
+
+        .cart-item form:last-child {
+            grid-column: 3;
+            grid-row: 1;
+        }
+    }
+</style>

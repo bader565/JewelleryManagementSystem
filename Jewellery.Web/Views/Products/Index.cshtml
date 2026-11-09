@@ -1,0 +1,346 @@
+﻿
+@model List<Jewellery.Application.DTOs.Products.ProductDto>
+
+@{
+    ViewData["Title"] = "إدارة المنتجات";
+}
+
+<style>
+    .products-page {
+        direction: rtl;
+        color: #292929;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .page-title {
+        font-size: 27px;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .page-subtitle {
+        color: #999;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .btn-add-product {
+        background: #292929;
+        color: white;
+        padding: 11px 22px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: .3s;
+    }
+
+    .btn-add-product:hover {
+        background: #b08d57;
+        color: white;
+    }
+
+    .products-card {
+        background: #fff;
+        border: 1px solid #eeeae4;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,.025);
+        overflow: hidden;
+    }
+
+    .products-card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #eeeae4;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .products-card-header h5 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .products-count {
+        background: #f5f2ed;
+        color: #9b7848;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+
+    .products-table {
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .products-table thead th {
+        background: #faf9f7;
+        color: #777;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 17px 12px;
+        border-bottom: 1px solid #eeeae4;
+    }
+
+    .products-table tbody td {
+        padding: 14px 12px;
+        font-size: 13px;
+        color: #555;
+        border-bottom: 1px solid #f3f1ed;
+        vertical-align: middle;
+    }
+
+    .products-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .products-table tbody tr:hover {
+        background: #fdfcfb;
+    }
+
+    .product-table-image {
+        width: 55px;
+        height: 55px;
+        object-fit: cover;
+        border-radius: 9px;
+        border: 1px solid #eeeae4;
+        background: #faf8f4;
+    }
+
+    .no-product-image {
+        width: 55px;
+        height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+        border-radius: 9px;
+        background: #f7f3eb;
+        color: #b08d57;
+        font-size: 25px;
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: #292929 !important;
+    }
+
+    .product-price {
+        font-weight: 600;
+        color: #9b7848 !important;
+    }
+
+    .quantity-badge {
+        background: #f5f2ed;
+        color: #555;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 7px;
+        text-decoration: none;
+        transition: .2s;
+    }
+
+    .edit-btn {
+        background: #f5f2ed;
+        color: #9b7848;
+    }
+
+    .edit-btn:hover {
+        background: #b08d57;
+        color: white;
+    }
+
+    .delete-btn {
+        background: #fff0ef;
+        color: #d35b55;
+    }
+
+    .delete-btn:hover {
+        background: #d35b55;
+        color: white;
+    }
+
+    .empty-products {
+        padding: 55px 20px !important;
+        color: #999 !important;
+    }
+
+    .empty-products i {
+        font-size: 38px;
+        color: #c9b795;
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    @@media(max-width: 768px) {
+        .page-header {
+            align-items: flex-start;
+        }
+
+        .page-title {
+            font-size: 23px;
+        }
+    }
+</style>
+
+<div class="container-fluid mt-4 products-page">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">إدارة المجوهرات</h2>
+            <p class="page-subtitle">
+                إدارة ومتابعة جميع المنتجات والمجوهرات
+            </p>
+        </div>
+
+        <a asp-controller="Products"
+           asp-action="Create"
+           class="btn-add-product">
+            <i class="fas fa-plus ms-2"></i>
+            إضافة منتج جديد
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success border-0 rounded-3">
+            <i class="fas fa-check-circle ms-2"></i>
+            @TempData["Success"]
+        </div>
+    }
+
+    <div class="products-card">
+
+        <div class="products-card-header">
+            <h5>
+                <i class="fas fa-gem ms-2" style="color:#b08d57"></i>
+                قائمة المنتجات
+            </h5>
+
+            <span class="products-count">
+                @Model.Count منتج
+            </span>
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table products-table text-center align-middle">
+
+                <thead>
+                    <tr>
+                        <th>الصورة</th>
+                        <th>الرقم</th>
+                        <th>اسم المنتج</th>
+                        <th>العيار</th>
+                        <th>الوزن (غرام)</th>
+                        <th>سعر الشراء</th>
+                        <th>سعر البيع</th>
+                        <th>الكمية</th>
+                        <th>الباركود</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model.Any())
+                    {
+                        @foreach (var product in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (product.ImageUrls != null &&
+                                         product.ImageUrls.Any())
+                                    {
+                                        <img src="@product.ImageUrls.First()"
+                                             alt="@product.Name"
+                                             class="product-table-image" />
+                                    }
+                                    else
+                                    {
+                                        <div class="no-product-image">
+                                            <i class="far fa-gem"></i>
+                                        </div>
+                                    }
+                                </td>
+
+                                <td>@product.Id</td>
+
+                                <td class="product-name">@product.Name</td>
+
+                                <td>@product.Karat</td>
+
+                                <td>@product.Weight.ToString("N3")</td>
+
+                                <td>@product.PurchasePrice.ToString("N2")</td>
+
+                                <td class="product-price">
+                                    @product.SellingPrice.ToString("N2")
+                                </td>
+
+                                <td>
+                                    <span class="quantity-badge">
+                                        @product.Quantity
+                                    </span>
+                                </td>
+
+                                <td>@(product.Barcode ?? "-")</td>
+
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@product.Id"
+                                           class="action-btn edit-btn"
+                                           title="تعديل">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@product.Id"
+                                           class="action-btn delete-btn"
+                                           title="حذف">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="10" class="empty-products">
+                                <i class="far fa-folder-open"></i>
+                                لا توجد منتجات حالياً
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>

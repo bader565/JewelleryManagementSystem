@@ -1,0 +1,321 @@
+﻿
+@model List<Jewellery.Application.DTOs.Documents.CertificateDto>
+
+@{
+    ViewData["Title"] = "Certificates";
+}
+
+<div class="certificates-page" dir="rtl">
+
+    <div class="page-heading">
+        <div>
+            <span class="section-eyebrow">DOCUMENT MANAGEMENT</span>
+            <h2>شهادات المجوهرات</h2>
+            <p>إدارة واستعراض شهادات فحص واعتماد قطع المجوهرات</p>
+        </div>
+
+        <div class="certificates-count">
+            <span>إجمالي الشهادات</span>
+            <strong>@(Model?.Count ?? 0)</strong>
+        </div>
+    </div>
+
+    <div class="certificates-card">
+
+        <div class="card-heading">
+            <div>
+                <h4>قائمة الشهادات</h4>
+                <span>جميع الشهادات المسجلة في النظام</span>
+            </div>
+
+            <div class="heading-icon">◇</div>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="empty-certificates">
+                <div class="empty-icon">◇</div>
+                <h4>لا توجد شهادات حتى الآن</h4>
+                <p>ستظهر الشهادات هنا بعد إضافتها إلى النظام.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="certificates-table">
+
+                    <thead>
+                        <tr>
+                            <th>رقم الشهادة</th>
+                            <th>المنتج</th>
+                            <th>نوع المنتج</th>
+                            <th>الوزن</th>
+                            <th>النقاء</th>
+                            <th>الذهب %</th>
+                            <th>التاريخ</th>
+                            <th>التفاصيل</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var certificate in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="certificate-number">
+                                        #@certificate.CertificateNumber
+                                    </span>
+                                </td>
+
+                                <td class="product-name">
+                                    @certificate.ProductName
+                                </td>
+
+                                <td>@certificate.ProductType</td>
+
+                                <td>@certificate.Weight</td>
+
+                                <td>@certificate.Purity</td>
+
+                                <td>
+                                    <span class="gold-percentage">
+                                        @certificate.GoldPercentage%
+                                    </span>
+                                </td>
+
+                                <td class="certificate-date">
+                                    @certificate.CreatedAt.ToString("yyyy-MM-dd")
+                                </td>
+
+                                <td>
+                                    <a asp-controller="Certificates"
+                                       asp-action="Details"
+                                       asp-route-id="@certificate.Id"
+                                       class="btn-details">
+                                        عرض التفاصيل
+                                        <span>←</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        }
+
+    </div>
+
+</div>
+
+<style>
+    .certificates-page {
+        max-width: 1250px;
+        margin: 40px auto;
+        padding: 0 20px;
+        color: #292929;
+    }
+
+    .page-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 20px;
+    }
+
+    .section-eyebrow {
+        color: #a88755;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    .page-heading h2 {
+        font-size: 27px;
+        font-weight: 600;
+        margin: 8px 0;
+    }
+
+    .page-heading p {
+        color: #999;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .certificates-count {
+        background: #fff;
+        border: 1px solid #eeeae3;
+        border-radius: 10px;
+        padding: 13px 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        min-width: 140px;
+    }
+
+    .certificates-count span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .certificates-count strong {
+        font-size: 22px;
+        color: #a88755;
+    }
+
+    .certificates-card {
+        background: #fff;
+        border: 1px solid #eeeae3;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0,0,0,.025);
+    }
+
+    .card-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 25px;
+        border-bottom: 1px solid #eeeae3;
+    }
+
+    .card-heading h4 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 6px;
+    }
+
+    .card-heading span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .heading-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: #f5f0e7;
+        color: #a88755;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+    }
+
+    .certificates-table {
+        width: 100%;
+        border-collapse: collapse;
+        white-space: nowrap;
+    }
+
+    .certificates-table thead {
+        background: #faf9f7;
+    }
+
+    .certificates-table th {
+        padding: 16px 14px;
+        color: #777;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: right;
+        border-bottom: 1px solid #eeeae3;
+    }
+
+    .certificates-table td {
+        padding: 17px 14px;
+        font-size: 13px;
+        color: #666;
+        border-bottom: 1px solid #f1efeb;
+        vertical-align: middle;
+    }
+
+    .certificates-table tbody tr {
+        transition: background .2s;
+    }
+
+    .certificates-table tbody tr:hover {
+        background: #fdfcf9;
+    }
+
+    .certificate-number {
+        color: #a88755;
+        font-weight: 600;
+    }
+
+    .product-name {
+        color: #333 !important;
+        font-weight: 600;
+    }
+
+    .gold-percentage {
+        display: inline-block;
+        background: #f8f2e7;
+        color: #a88755;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .certificate-date {
+        color: #999 !important;
+    }
+
+    .btn-details {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        text-decoration: none;
+        color: #a88755;
+        border: 1px solid #e9dfce;
+        border-radius: 7px;
+        padding: 7px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        transition: .2s;
+    }
+
+    .btn-details:hover {
+        background: #a88755;
+        color: #fff;
+        border-color: #a88755;
+    }
+
+    .empty-certificates {
+        text-align: center;
+        padding: 65px 20px;
+    }
+
+    .empty-icon {
+        color: #b08d57;
+        font-size: 45px;
+        margin-bottom: 12px;
+    }
+
+    .empty-certificates h4 {
+        font-size: 17px;
+        font-weight: 600;
+    }
+
+    .empty-certificates p {
+        color: #999;
+        font-size: 13px;
+        margin-top: 8px;
+    }
+
+    @@media (max-width: 768px) {
+        .page-heading {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .certificates-count {
+            width: 100%;
+        }
+
+        .card-heading {
+            padding: 18px;
+        }
+    }
+</style>

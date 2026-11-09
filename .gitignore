@@ -1,0 +1,42 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# NuGet
+*.nupkg
+.nuget/
+
+# Logs and temporary files
+*.log
+*.tmp
+[Tt]emp/
+[Tt]mp/
+
+# Local databases and backups
+*.mdf
+*.ldf
+*.bak
+
+# Local settings and secrets
+appsettings.Development.json
+appsettings.Local.json
+.env
+.env.*
+
+# Uploaded files and generated data
+Uploads/
+App_Data/
+
+# Test results
+TestResults/

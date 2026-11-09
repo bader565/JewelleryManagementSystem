@@ -1,0 +1,386 @@
+﻿
+@model Jewellery.Application.DTOs.Documents.CertificateDto
+
+@{
+    ViewData["Title"] = "Certificate Details";
+}
+
+<div class="certificate-page" dir="rtl">
+
+    <div class="page-heading">
+        <div>
+            <span class="section-eyebrow">CERTIFICATE MANAGEMENT</span>
+            <h2>تفاصيل الشهادة</h2>
+            <p>عرض بيانات شهادة فحص واعتماد قطعة المجوهرات</p>
+        </div>
+
+        <a asp-controller="Certificates"
+           asp-action="Index"
+           class="btn-back">
+            ← العودة للشهادات
+        </a>
+    </div>
+
+    <div class="certificate-card">
+
+        <div class="certificate-header">
+            <div class="certificate-icon">◇</div>
+
+            <div>
+                <span>GEMSTONE CERTIFICATE</span>
+                <h3>شهادة رقم #@Model.CertificateNumber</h3>
+            </div>
+
+            <div class="certificate-status">
+                <span class="status-dot"></span>
+                شهادة محفوظة
+            </div>
+        </div>
+
+        <div class="certificate-body">
+
+            <h4 class="details-title">معلومات القطعة</h4>
+
+            <div class="details-grid">
+
+                <div class="detail-item">
+                    <span>اسم المنتج</span>
+                    <strong>@Model.ProductName</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>نوع المنتج</span>
+                    <strong>@Model.ProductType</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>الوزن</span>
+                    <strong>@Model.Weight</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>النقاء</span>
+                    <strong>@Model.Purity</strong>
+                </div>
+
+            </div>
+
+            <div class="section-divider"></div>
+
+            <h4 class="details-title">نسب المعادن</h4>
+
+            <div class="metal-grid">
+
+                <div class="metal-item">
+                    <span class="metal-indicator gold"></span>
+                    <div>
+                        <span>نسبة الذهب</span>
+                        <strong>@Model.GoldPercentage%</strong>
+                    </div>
+                </div>
+
+                <div class="metal-item">
+                    <span class="metal-indicator silver"></span>
+                    <div>
+                        <span>نسبة الفضة</span>
+                        <strong>@Model.SilverPercentage%</strong>
+                    </div>
+                </div>
+
+                <div class="metal-item">
+                    <span class="metal-indicator copper"></span>
+                    <div>
+                        <span>نسبة النحاس</span>
+                        <strong>@Model.CopperPercentage%</strong>
+                    </div>
+                </div>
+
+                <div class="metal-item">
+                    <span class="metal-indicator other"></span>
+                    <div>
+                        <span>معادن أخرى</span>
+                        <strong>@Model.OtherPercentage%</strong>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="section-divider"></div>
+
+            <div class="created-info">
+                <span>تاريخ إنشاء الشهادة</span>
+                <strong>@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</strong>
+            </div>
+
+        </div>
+
+        <div class="certificate-footer">
+            <a asp-controller="Certificates"
+               asp-action="Index"
+               class="btn-back-list">
+                العودة إلى قائمة الشهادات
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    .certificate-page {
+        max-width: 1050px;
+        margin: 40px auto;
+        padding: 0 20px;
+        color: #292929;
+    }
+
+    .page-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 15px;
+    }
+
+    .section-eyebrow {
+        color: #a88755;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    .page-heading h2 {
+        font-size: 27px;
+        font-weight: 600;
+        margin: 8px 0;
+    }
+
+    .page-heading p {
+        color: #999;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .btn-back {
+        text-decoration: none;
+        color: #555;
+        border: 1px solid #e8e5df;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+    }
+
+    .btn-back:hover {
+        background: #f7f5f1;
+        color: #a88755;
+    }
+
+    .certificate-card {
+        background: #fff;
+        border: 1px solid #eeeae3;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0,0,0,.03);
+    }
+
+    .certificate-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 25px 30px;
+        background: #fdfcf9;
+        border-bottom: 1px solid #eeeae3;
+    }
+
+    .certificate-icon {
+        width: 55px;
+        height: 55px;
+        background: #f4eee3;
+        color: #a88755;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+    }
+
+    .certificate-header > div:nth-child(2) {
+        flex: 1;
+    }
+
+    .certificate-header > div:nth-child(2) span {
+        font-size: 10px;
+        color: #a88755;
+        letter-spacing: 2px;
+        font-weight: 700;
+    }
+
+    .certificate-header h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 6px 0 0;
+    }
+
+    .certificate-status {
+        color: #62856b;
+        font-size: 12px;
+        background: #edf5ee;
+        padding: 8px 12px;
+        border-radius: 20px;
+    }
+
+    .status-dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #6c9b73;
+        margin-left: 5px;
+    }
+
+    .certificate-body {
+        padding: 30px;
+    }
+
+    .details-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 22px;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background: #faf9f7;
+        padding: 17px;
+        border-radius: 9px;
+    }
+
+    .detail-item span,
+    .metal-item span:not(.metal-indicator),
+    .created-info span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .detail-item strong {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .section-divider {
+        height: 1px;
+        background: #eeeae3;
+        margin: 28px 0;
+    }
+
+    .metal-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .metal-item {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        border: 1px solid #eeeae3;
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    .metal-indicator {
+        width: 11px;
+        height: 35px;
+        border-radius: 5px;
+    }
+
+    .metal-indicator.gold {
+        background: #c6a15b;
+    }
+
+    .metal-indicator.silver {
+        background: #b9bec4;
+    }
+
+    .metal-indicator.copper {
+        background: #bd8060;
+    }
+
+    .metal-indicator.other {
+        background: #8b9a83;
+    }
+
+    .metal-item div {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .metal-item strong {
+        font-size: 16px;
+    }
+
+    .created-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .created-info strong {
+        font-size: 13px;
+        color: #555;
+    }
+
+    .certificate-footer {
+        padding: 18px 30px;
+        background: #fdfcf9;
+        border-top: 1px solid #eeeae3;
+    }
+
+    .btn-back-list {
+        display: inline-block;
+        text-decoration: none;
+        color: #a88755;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    @@media (max-width: 576px) {
+        .page-heading {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .certificate-header {
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .certificate-status {
+            margin-right: 70px;
+        }
+
+        .certificate-body {
+            padding: 20px;
+        }
+
+        .details-grid,
+        .metal-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .created-info {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+    }
+</style>

@@ -1,0 +1,472 @@
+﻿
+@model Jewellery.Application.DTOs.Orders.CheckoutDto
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="checkout-page" dir="rtl">
+
+    <div class="checkout-heading">
+        <div>
+            <span class="checkout-eyebrow">SECURE CHECKOUT</span>
+            <h2>إتمام الطلب</h2>
+            <p>أدخل بياناتك لإتمام عملية شراء المجوهرات</p>
+        </div>
+
+        <div class="checkout-step">
+            <span class="step-number">01</span>
+            <span>بيانات التوصيل</span>
+        </div>
+    </div>
+
+    <form asp-controller="Checkout"
+          asp-action="Index"
+          method="post">
+
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="All"
+             class="validation-summary"></div>
+
+        <div class="checkout-layout">
+
+            <div class="checkout-form-card">
+
+                <div class="checkout-card-heading">
+                    <div class="checkout-heading-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h4>معلومات العميل</h4>
+                        <span>يرجى إدخال بيانات التواصل الصحيحة</span>
+                    </div>
+                </div>
+
+                <div class="checkout-form-body">
+
+                    <div class="form-group">
+                        <label asp-for="CustomerName">الاسم الكامل</label>
+                        <input asp-for="CustomerName"
+                               class="checkout-input"
+                               placeholder="أدخل الاسم الكامل" />
+                        <span asp-validation-for="CustomerName"
+                              class="field-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CustomerEmail">البريد الإلكتروني</label>
+                        <input asp-for="CustomerEmail"
+                               class="checkout-input"
+                               placeholder="example@email.com" />
+                        <span asp-validation-for="CustomerEmail"
+                              class="field-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CustomerPhone">رقم الهاتف</label>
+                        <input asp-for="CustomerPhone"
+                               class="checkout-input"
+                               placeholder="أدخل رقم الهاتف" />
+                        <span asp-validation-for="CustomerPhone"
+                              class="field-error"></span>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <div class="checkout-card-heading shipping-heading">
+                        <div class="checkout-heading-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <div>
+                            <h4>معلومات التوصيل</h4>
+                            <span>أين ترغب باستلام طلبك؟</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="City">المدينة</label>
+                        <input asp-for="City"
+                               class="checkout-input"
+                               placeholder="مثال: عمّان" />
+                        <span asp-validation-for="City"
+                              class="field-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ShippingAddress">عنوان التوصيل بالتفصيل</label>
+                        <textarea asp-for="ShippingAddress"
+                                  class="checkout-input"
+                                  rows="3"
+                                  placeholder="اسم الشارع، المنطقة، المبنى، وأي تفاصيل تساعد في الوصول إليك"></textarea>
+                        <span asp-validation-for="ShippingAddress"
+                              class="field-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Notes">
+                            ملاحظات إضافية
+                            <span class="optional-label">اختياري</span>
+                        </label>
+                        <textarea asp-for="Notes"
+                                  class="checkout-input"
+                                  rows="2"
+                                  placeholder="أي تعليمات إضافية للتوصيل"></textarea>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="checkout-side">
+
+                <div class="checkout-summary-card">
+
+                    <div class="summary-heading">
+                        <h4>إتمام عملية الشراء</h4>
+                        <div class="summary-gem">◇</div>
+                    </div>
+
+                    <div class="summary-message">
+                        يرجى التأكد من صحة بياناتك قبل تأكيد الطلب.
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="secure-info">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>بيانات طلبك تُرسل بأمان.</span>
+                    </div>
+
+                    <button type="submit" class="btn-place-order">
+                        تأكيد الطلب
+                        <span>←</span>
+                    </button>
+
+                    <a asp-controller="Cart"
+                       asp-action="Index"
+                       class="btn-back-cart">
+                        العودة إلى سلة التسوق
+                    </a>
+
+                </div>
+
+                <div class="checkout-help">
+                    <i class="fas fa-info-circle"></i>
+                    <p>
+                        تأكد من إدخال رقم هاتف وعنوان صحيحين
+                        لتسهيل التواصل معك وتوصيل طلبك.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+<style>
+    .checkout-page {
+        max-width: 1150px;
+        margin: 40px auto;
+        padding: 0 20px 45px;
+        color: #292929;
+    }
+
+    .checkout-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 20px;
+    }
+
+    .checkout-eyebrow {
+        color: #a88755;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    .checkout-heading h2 {
+        font-size: 28px;
+        font-weight: 600;
+        margin: 8px 0;
+    }
+
+    .checkout-heading p {
+        color: #999;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .checkout-step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #777;
+        font-size: 13px;
+    }
+
+    .step-number {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #f5f0e7;
+        color: #a88755;
+        font-weight: 700;
+    }
+
+    .checkout-layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 25px;
+        align-items: start;
+    }
+
+    .checkout-form-card,
+    .checkout-summary-card {
+        background: #fff;
+        border: 1px solid #eeeae3;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .checkout-card-heading {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 22px 25px;
+        background: #fdfcf9;
+        border-bottom: 1px solid #eeeae3;
+    }
+
+    .checkout-heading-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: #f5f0e7;
+        color: #a88755;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .checkout-card-heading h4 {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0 0 5px;
+    }
+
+    .checkout-card-heading span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .checkout-form-body {
+        padding: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 9px;
+    }
+
+    .checkout-input {
+        display: block;
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #e8e5df;
+        border-radius: 8px;
+        background: #fff;
+        color: #333;
+        font-size: 13px;
+        outline: none;
+        transition: .2s;
+    }
+
+    .checkout-input:focus {
+        border-color: #b08d57;
+        box-shadow: 0 0 0 3px rgba(176,141,87,.10);
+    }
+
+    .checkout-input::placeholder {
+        color: #bbb;
+    }
+
+    .field-error {
+        display: block;
+        color: #bd5149;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .optional-label {
+        color: #aaa;
+        font-size: 11px;
+        font-weight: 400;
+    }
+
+    .section-divider {
+        height: 1px;
+        background: #eeeae3;
+        margin: 25px 0;
+    }
+
+    .shipping-heading {
+        padding: 0;
+        background: transparent;
+        border: none;
+        margin-bottom: 22px;
+    }
+
+    .checkout-summary-card {
+        padding: 23px;
+    }
+
+    .summary-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .summary-heading h4 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .summary-gem {
+        font-size: 27px;
+        color: #a88755;
+    }
+
+    .summary-message {
+        color: #999;
+        font-size: 12px;
+        line-height: 1.8;
+        margin-top: 15px;
+    }
+
+    .summary-divider {
+        height: 1px;
+        background: #eeeae3;
+        margin: 20px 0;
+    }
+
+    .secure-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #71916e;
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+
+    .btn-place-order {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 14px;
+        background: #a88755;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .btn-place-order:hover {
+        background: #8e7044;
+    }
+
+    .btn-back-cart {
+        display: block;
+        text-align: center;
+        text-decoration: none;
+        color: #777;
+        font-size: 12px;
+        margin-top: 17px;
+    }
+
+    .btn-back-cart:hover {
+        color: #a88755;
+    }
+
+    .checkout-help {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 16px;
+        margin-top: 18px;
+        background: #faf8f4;
+        border: 1px solid #eee5d7;
+        border-radius: 10px;
+        color: #a88755;
+    }
+
+    .checkout-help i {
+        margin-top: 3px;
+    }
+
+    .checkout-help p {
+        color: #8d806b;
+        font-size: 12px;
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    .validation-summary {
+        color: #bd5149;
+        font-size: 13px;
+        margin-bottom: 18px;
+    }
+
+    .validation-summary:empty {
+        display: none;
+    }
+
+    @@media (max-width: 850px) {
+        .checkout-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .checkout-side {
+            order: -1;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .checkout-heading {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .checkout-form-body {
+            padding: 18px;
+        }
+
+        .checkout-card-heading {
+            padding: 18px;
+        }
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
